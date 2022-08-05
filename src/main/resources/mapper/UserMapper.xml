@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cykj.mapper.UserMapper">
+    <select id="loginStaff" resultType="com.cykj.bean.Tblstaff">
+        select * from tblstaff where acc = #{acc} and pwd = #{pwd} and isValid = 0
+    </select>
+    <insert id="insertStaff" parameterType="com.cykj.bean.Tblstaff">
+        insert into tblstaff(acc, pwd, name, address, state,headImg)
+        VALUE (#{acc},#{pwd},#{name},#{address},#{age},#{headImg})
+    </insert>
+    <select id="selAllUser" resultType="com.cykj.bean.Tblstaff">
+        select * ,state as age from tblstaff
+        <where>
+            <if test="acc != null and acc != ''">
+                acc = #{acc}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            and isValid = 0
+        </where>
+    </select>
+    <update id="delUser">
+        update tblstaff set isValid = 1 where staffId = #{staffId}
+    </update>
+    <update id="updateUser" parameterType="com.cykj.bean.Tblstaff">
+        update tblstaff set acc = #{acc},name = #{name},state = #{age},address = #{address}
+        where staffId = #{staffId}
+    </update>
+    <insert id="insertUser" parameterType="com.cykj.bean.Tblstaff">
+        insert into tblstaff(acc, pwd, roleId, name, address, state, isValid)
+         value (#{acc},#{pwd},1,#{name},#{address},#{age},0)
+    </insert>
+</mapper>

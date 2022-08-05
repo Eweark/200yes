@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/jquery1.12.4.js"></script>
+</head>
+<body>
+欢迎您 <p th:text="${userName}"></p>  来购物
+用户名:<input type="text" name="userName" id="userName"><br>
+<input type="button" value="检查是否被注册" id="btnCheck" onclick="click1()">
+</body>
+<script>
+    function click1() {
+        var userName = $('#userName').val();
+        $.ajax({
+            url:"checkAcc",
+            method:"post",
+            data:{
+                "userName":userName
+            },
+            dataType:'json',
+            success:function (result) {
+                console.log(result)
+            },
+            error:function () {
+                console.log("连接失败")
+            }
+        })
+    }
+</script>
+</html>

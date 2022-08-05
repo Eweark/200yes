@@ -1,0 +1,15 @@
+com\cykj\bean\Tblrolepower.class
+com\cykj\service\UserService.class
+com\cykj\bean\Tblpower.class
+com\cykj\bean\Tblrole.class
+com\cykj\bean\Tblstaff.class
+com\cykj\controller\UserController.class
+com\cykj\controller\LoginController.class
+com\cykj\controller\RoleController.class
+com\cykj\service\impl\UserServiceImpl.class
+com\cykj\service\LoginService.class
+com\cykj\service\RoleService.class
+com\cykj\mapper\RoleMapper.class
+com\cykj\service\impl\RoleServiceImpl.class
+com\cykj\mapper\UserMapper.class
+com\cykj\service\impl\LoginServiceImpl.class

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/jquery1.12.4.js"></script>
+    <!-- 引入 layui.css -->
+    <link rel="stylesheet" href="../js/lib/layui/css/layui.css">
+    <!-- 引入 layui.js -->
+    <script src="../js/lib/layui/layui.js"></script>
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+
+</head>
+<body style="background-color: whitesmoke">
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend style="margin-left: 40%;">角色管理</legend>
+</fieldset>
+
+<form id="proInfo" >
+
+    <div class="layui-form-item" id="passOrReject">
+        <div class="layui-input-block" style="margin-left: 5%;">
+            <button type="button" class="layui-btn layui-btn-normal" style="background-color: #03b8cf" id="batchReject" onclick="addRole(null,0)">
+                添加
+            </button>
+        </div>
+    </div>
+</form>
+
+
+<div style="width: 1200px;height: 350px;margin-left: 5%">
+    <table border="1" cellspacing="0" cellpadding="0" style="width: 100%;border:1px solid white;margin-top: 20px;text-align: center;">
+        <tr id="thead1"  height="38px" style="background-color: #03b8cf;color: aliceblue;font-weight: bold;">
+            <td><input type="checkbox" id="checkAll"  name="checkAll"></td>
+            <td style="width: 150px">id</td>
+            <td style="width: 170px">角色名称</td>
+            <td style="width: 360px">角色备注</td>
+            <td style="width: 360px">操作</td>
+        </tr>
+        <tbody id="contentTb">
+
+        </tbody>
+    </table>
+</div>
+
+<div id="test1" style="margin-left: 40vw"></div>
+
+
+</body>
+<script>
+
+    var pageC = 1;
+    var recordCount;
+    var roleAllLis;
+    $(function () {
+        selAllRole();
+        page();
+    });
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+    });
+    function selAllRole(){
+        $('#contentTb').empty();
+        $.ajax({
+            url:"role",
+            method:"post",
+            async:false,
+            data:{
+                "pageCurr":pageC,
+                "pageSize":4
+            },
+            dataType:"json",
+            success:function (result) {
+                var roleList = result.roleList;
+                recordCount = result.recordCount;
+                roleAllLis = roleList;
+                var html = "";
+                for (var i = 0; i <roleList.length ; i++) {
+                    html += "<tr>";
+                    html += "<td><input type='checkbox'></td>";
+                    html += "<td>"+roleList[i].roleId+"</td>";
+                    html += "<td>"+roleList[i].roleName+"</td>";
+                    html += "<td>"+roleList[i].roleDesc+"</td>";
+                    var b = JSON.stringify(roleList[i]);
+                    html += "<td><button type='button' class=\"layui-btn\" onclick='addRole("+b+",1)' >修改</button>" +
+                        "<button type='button' class=\"layui-btn layui-btn-danger\" onclick='delRole("+roleList[i].roleId+")' >删除</button> " +
+                        "<button type='button' class=\"layui-btn layui-btn-danger\" style='background-color: #03b8cf;' onclick='setPower("+roleList[i].roleId+")'>授权</button></td>";
+                    html += "</tr>";
+                }
+                $('#contentTb').append(html);
+            }
+        });
+    }
+
+    //删除角色
+    function delRole(id) {
+        layer.confirm('确认要删除吗？',function(index) {
+            $.ajax({
+                url: "delRole",
+                method: "post",
+                data: {
+                    "roleId": id
+                },
+                success: function (result) {
+                    if (result == 1) {
+                        layer.msg('已删除!', {icon: 1, time: 1000}, function () {
+                            location.reload();
+                        });
+
+                    } else if (result == 2) {
+                        layer.msg('该角色存在用户使用，请取消后重试!', {icon: 2, time: 1000});
+                    } else {
+                        layer.msg('删除失败!', {icon: 5, time: 1000});
+                    }
+                }
+            })
+        })
+    }
+
+    //分页
+    function page() {
+        layui.use('laypage', function(){
+            var laypage = layui.laypage;
+            //执行一个laypage实例
+            laypage.render({
+                elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+                ,count: recordCount //数据总数，从服务端得到
+                ,limit:4
+                ,theme: '#03b8cf'
+                ,jump:function (obj, first){
+                    pageC = obj.curr;
+                    if (!first) {
+                        selAllRole();
+                    }
+
+                }
+            });
+        });
+    }
+    //添加
+    function addRole(bean,flag) {
+        localStorage.setItem("flag",flag);
+        var title = "添加用户"
+        if (flag == 1){
+            localStorage.setItem("role",JSON.stringify(bean));
+            title = "修改用户"
+        }
+        xadmin.open(title,getContextPath()+'/role/roleAddOrUpd',400,400);
+
+    }
+
+    function setPower(roleId) {
+        localStorage.setItem("roleId",roleId);
+        xadmin.open('授权',getContextPath()+'/role/roleSetPower',800,600);
+    }
+    function getContextPath(){
+        var pathName = document.location.pathname;
+        var index = pathName.substr(1).indexOf("/");
+        return pathName.substr(0, index + 1);
+    }
+
+
+</script>
+</html>

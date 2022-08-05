@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加角色</title>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <link rel="stylesheet" href="../js/lib/layui/css/layui.css">
+    <script type="text/javascript" src="../js/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script src="../js/jquery1.12.4.js"></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form action="" method="post" class="layui-form layui-form-pane" id="roleForm">
+            <input type="hidden" id="roleId" name="roleId" value="0">
+            <div class="layui-form-item">
+                <label for="name" class="layui-form-label">
+                    <span class="x-red">*</span>角色名
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="name" name="roleName" required="" lay-verify="required"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label for="desc" class="layui-form-label">
+                    描述
+                </label>
+                <div class="layui-input-block">
+                    <textarea placeholder="请输入内容" id="desc" name="roleDesc" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button type="button"  id="btn" class="layui-btn" lay-submit="" lay-filter="add" onclick="addUpd()">增加</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+        form.render('checkbox');
+    });
+    var flag;
+    echo();
+    function echo() {
+       flag = localStorage.getItem("flag");
+       if (flag == 1){
+           $('#btn').html("修改");
+           var role = JSON.parse(localStorage.getItem("role"));
+           console.log(role);
+           var roleName = role.roleName;
+           var roleId = role.roleId;
+           $('#name').val(roleName);
+           $('#desc').val(role.roleDesc);
+           $('#roleId').val(roleId);
+       }else {
+           $('#roleId').val(0);
+           $('#btn').html("添加");
+       }
+    }
+    function addUpd() {
+        var ul;
+        if (flag == 1){
+            ul = "updRole";
+        }else {
+            ul = "insRole";
+        }
+        $.ajax({
+            url:ul,
+            method:"post",
+            data:$('#roleForm').serialize(),
+            dataType:"json",
+            success:function (re) {
+                if (re == 1){
+                    layer.msg('保存成功!',{icon:1,time:1000},function () {
+                        window.parent.layer.closeAll();
+                        window.parent.location.reload();
+                    });
+                }else {
+                    layer.msg('保存失败!',{icon:5,time:1000});
+                }
+            }
+        })
+    }
+</script>
+</html>

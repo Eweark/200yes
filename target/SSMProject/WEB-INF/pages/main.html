@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <link rel="stylesheet" href="../css/theme5.css">
+    <link rel="stylesheet" href="../js/lib/layui/css/layui.css">
+    <script src="../js/lib/layui/layui.js"></script>
+    <script src="../js/jquery1.12.4.js"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+</head>
+<body>
+<!-- 顶部开始 -->
+<div class="container">
+    <div class="logo">
+        <a >公租房管理系统</a></div>
+    <div class="left_open">
+        <a><i title="展开左侧栏" class="iconfont">&#xe699;</i></a>
+    </div>
+    <ul class="layui-nav right" lay-filter="">
+        <li class="layui-nav-item">
+            <a href="javascript:;" th:text="${session.user.name}"></a>
+            <dl class="layui-nav-child">
+                <!-- 二级菜单 -->
+                <dd>
+                    <a onclick="xadmin.open('个人信息','<%=request.getContextPath()%>/404.jsp')">个人信息</a></dd>
+                <dd>
+                    <a onclick="xadmin.open('修改密码','<%=request.getContextPath()%>/view/updPwd.jsp')">修改密码</a></dd>
+                <dd>
+                    <a onclick="logout()" class="close-all" data-type="closeall">退出</a></dd>
+            </dl>
+        </li>
+
+    </ul>
+</div>
+<!-- 顶部结束 -->
+<!-- 中部开始 -->
+<!-- 左侧菜单开始 -->
+<div class="left-nav" style="overflow: scroll">
+    <div id="side-nav">
+        <ul id="nav">
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont left-nav-li" lay-tips="会员管理">&#xe6b8;</i>
+                    <cite>会员管理</cite>
+                    <i class="iconfont nav_right">&#xe697;</i></a>
+                <ul class="sub-menu">
+                    <li>
+                        <a onclick="xadmin.add_tab('统计页面','<%=request.getContextPath()%>/view/updPwd.jsp')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>统计页面</cite></a>
+                    </li>
+                    <li>
+                        <a onclick="xadmin.add_tab('会员列表(静态表格)','member-list.html')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>会员列表(静态表格)</cite></a>
+                    </li>
+                    <li>
+                        <a onclick="xadmin.add_tab('会员列表(动态表格)','member-list1.html',true)">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>会员列表(动态表格)</cite></a>
+                    </li>
+                    <li>
+                        <a onclick="xadmin.add_tab('会员删除','member-del.html')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>会员删除</cite></a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="iconfont">&#xe70b;</i>
+                            <cite>会员管理</cite>
+                            <i class="iconfont nav_right">&#xe697;</i></a>
+                        <ul class="sub-menu">
+                            <li>
+                                <a onclick="xadmin.add_tab('会员删除','member-del.html')">
+                                    <i class="iconfont">&#xe6a7;</i>
+                                    <cite>会员删除</cite></a>
+                            </li>
+                            <li>
+                                <a onclick="xadmin.add_tab('等级管理','member-list1.html')">
+                                    <i class="iconfont">&#xe6a7;</i>
+                                    <cite>等级管理</cite></a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+    </div>
+</div>
+<!-- <div class="x-slide_left"></div> -->
+<!-- 左侧菜单结束 -->
+<!-- 右侧主体开始 -->
+<div class="page-content">
+    <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
+        <ul class="layui-tab-title">
+            <li class="home">
+                <i class="layui-icon">&#xe68e;</i>我的桌面</li></ul>
+        <div class="layui-unselect layui-form-select layui-form-selected" id="tab_right">
+            <dl>
+                <dd data-type="this">关闭当前</dd>
+                <dd data-type="other">关闭其它</dd>
+                <dd data-type="all">关闭全部</dd></dl>
+        </div>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <iframe src='' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
+            </div>
+        </div>
+        <div id="tab_show"></div>
+    </div>
+</div>
+<div class="page-content-bg"></div>
+<style id="theme_style"></style>
+</body>
+<script>
+    layui.use('element',function(){
+        var $ = layui.jquery;
+        var element = layui.element;//Tab的切换功能，切换事件监听等，需要依赖element模块
+        var layer = layui.layer;
+        var active = {
+            //在这里给active绑定事件，后面可通过active调用这些事件
+            tabDeleteAll:function(ids){//删除所有
+                $.each(ids,function(i,item){
+                    element.tabDelete("xbs_tab",item);//ids是一个数组，里面存放了多个id，调用tabDelete方法分别删除
+                })
+            }
+        }
+    });
+    //
+    //     function clearTap(){
+    //         var tabtitle = $(".layui-tab-title li");
+    //         var ids = new Array();
+    //         $.each(tabtitle, function (i) {
+    //             ids[i] = $(this).attr("lay-id");
+    //         });
+    //         active.tabDeleteAll(ids);
+    //     }
+    //
+    //     $(".close-all").click(function () {
+    //         if ($(this).attr("data-type") == "closeall") {
+    //             var tabtitle = $(".layui-tab-title li");
+    //             var ids = new Array();
+    //             $.each(tabtitle, function (i) {
+    //                 ids[i] = $(this).attr("lay-id");
+    //             });
+    //             active.tabDeleteAll(ids);
+    //         }
+    //
+    //     })
+    // });
+    //
+    //查询所有权限菜单
+    $(function () {
+        $.ajax({
+            url: "power",
+            method: "post",
+            async:false,
+            dataType:"json",
+            success: function (result) {
+                var powerList = result.updPower;
+                var html = "";
+
+                for (var i = 0; i < powerList.length; i++) {
+                    if (powerList[i].parentId == -1) {
+                        html += "<ul id=\"nav\">";
+                        html += "<li> <a href=\"javascript:;\">";
+                        html += "<i class=\"iconfont left-nav-li\" lay-tips=\"第三方组件\">&#xe6b4;</i>";
+                        html += "<cite>" + powerList[i].powerName + "</cite>";
+                        html += "<i class=\"iconfont nav_right\">&#xe697;</i></a>";
+                        html += addChild(powerList, powerList[i].powerId);
+                        html += "</li>";
+                        html += "</ul>";
+                    }
+
+                }
+                document.getElementById("side-nav").innerHTML = html;
+            }
+        });
+    });
+
+
+    //
+    //加入子菜单
+    function addChild(powerList,powerId) {
+        var childHtml = '';
+        childHtml += "<li>";
+        for (var i = 0; i <powerList.length ; i++) {
+            if (powerList[i].parentId == powerId){
+                var url = getContextPath() + powerList[i].url;
+                childHtml += "<li><a onclick='xadmin.add_tab(\""+powerList[i].powerName+"\",this.id)' id='"+url+"' target=''>";
+                childHtml += "<i class=\"iconfont\">&#xe6a7;</i>";
+                childHtml += "<cite id='"+powerList[i].powerId+"'>"+powerList[i].powerName+"</cite></a></li>";
+            }
+        }
+        if (childHtml!=''){
+            childHtml="<ul  class=\"sub-menu\">"+childHtml+"</ul>"
+        }
+        return childHtml;
+    }
+    function getContextPath(){
+        var pathName = document.location.pathname;
+        var index = pathName.substr(1).indexOf("/");
+        return pathName.substr(0, index + 1);
+    }
+    // //退出方法
+    // function logout() {
+    //     layer.confirm('是否退出登录？',function(index){
+    //         $.ajax({
+    //             url:"<%=request.getContextPath()%>/staff",
+    //             method:"post",
+    //             data:{
+    //                 "action":"logout"
+    //             },
+    //             success:function (result) {
+    //                 if (result == 1){
+    //                     layer.msg('退出成功！',{icon:1,time:1000},function () {
+    //                         window.location.href="<%=request.getContextPath()%>/login.jsp";
+    //                     });
+    //                 }else {
+    //                     layer.msg('退出失败！',{icon:5,time:1000});
+    //                 }
+    //             }
+    //         })
+    //     });
+    // }
+</script>
+</html>

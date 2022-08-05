@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cykj.mapper.RoleMapper">
+    <select id="queryAllRole" resultType="com.cykj.bean.Tblrole">
+        select * from tblrole
+    </select>
+    <select id="queryAllPower" resultType="com.cykj.bean.Tblpower">
+        select * from tblpower
+    </select>
+    <select id="queryPowerById" resultType="com.cykj.bean.Tblpower">
+        select p.* from tblpower p inner join  tblrolepower r on p.powerId = r.powerId where r.roleId = #{roleId}
+    </select>
+    <select id="queryNoPower" resultType="com.cykj.bean.Tblpower">
+        select * from tblpower where powerId NOT in(select p.powerId from tblpower p inner join  tblrolepower r on p.powerId = r.powerId where r.roleId = #{roleId} and p.parentId != -1 )
+    </select>
+    <delete id="delPowerById">
+        delete * from tblrolepower where roleId = #{roleId} and powerId = #{powerId}
+    </delete>
+    <delete id="delAllById">
+        delete  from tblrolepower where roleId = #{roleId}
+    </delete>
+    <insert id="insertPower" parameterType="com.cykj.bean.Tblrolepower">
+        insert into tblrolepower(roleId, powerId) VALUE (#{roleId},#{powerId})
+    </insert>
+    <insert id="insertRole" parameterType="com.cykj.bean.Tblrole">
+        insert into tblrole(roleName,roleDesc) values (#{roleName},#{roleDesc})
+    </insert>
+    <update id="updateRole" parameterType="com.cykj.bean.Tblrole">
+        update tblrole set roleName = #{roleName},roleDesc = #{roleDesc} where roleId = #{roleId}
+    </update>
+    <select id="queryRoleId" resultType="com.cykj.bean.Tblrole">
+        select * from tblrole where roleName = #{roleName}
+    </select>
+    <delete id="deleteRole">
+        delete from tblrole where roleId = #{roleId}
+    </delete>
+    <select id="queryStaffByRole" resultType="com.cykj.bean.Tblstaff">
+        select * from tblstaff where roleId = #{roleId}
+    </select>
+</mapper>
